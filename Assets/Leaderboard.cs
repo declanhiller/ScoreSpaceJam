@@ -9,6 +9,9 @@ namespace DefaultNamespace {
         private GameObject leaderboard;
         
         private void Start() {
+            //Where I would set the leaderboard as loading without any players
+            
+            //Get the leaderboard and actually create
             GetLeaderboard();
         }
 
@@ -21,7 +24,7 @@ namespace DefaultNamespace {
 
         private void CreateLeaderboard(LootLockerGetScoreListResponse resp)
         {
-            Debug.Log("Leaderboard is now created");
+            Debug.Log("Instantiate Leaderboard Spots");
         }
     }
 }
