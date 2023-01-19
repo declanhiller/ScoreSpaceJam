@@ -56,11 +56,7 @@ public class LootLockerManager : MonoBehaviour {
         LootLockerSDKManager.SubmitScore(playerName, score, LEADERBOARD_KEY, OnSubmittedScore);
     }
 
-    public delegate Task LootOnScoreListResp<out T>() where T : LootLockerResponse;
-    event LootOnScoreListResp<LootLockerGetScoreListResponse> MyEvent; 
-
     public async Task<LootLockerGetScoreListResponse> GetScoreListAsync() {
-        
         TaskCompletionSource<LootLockerGetScoreListResponse> tcs1 = new TaskCompletionSource<LootLockerGetScoreListResponse>();
         
         LootLockerSDKManager.GetScoreList(LEADERBOARD_KEY, 5, 5, async (resp) => {

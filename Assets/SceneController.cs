@@ -21,8 +21,9 @@ public class SceneController : MonoBehaviour {
     }
 
 
-    public void Leaderboard() {
-        
+    public void Leaderboard()
+    {
+        SceneManager.LoadScene("LeaderboardScreen");
     }
 
     public void Signup() {
