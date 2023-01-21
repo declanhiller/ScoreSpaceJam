@@ -9,7 +9,7 @@ using Random = UnityEngine.Random;
 
 namespace Player
 {
-    public class Player : IChessPiece
+    public class Player : ChessPiece
     {
         private Queue<ChessMovement> queuedMovements = new Queue<ChessMovement>();
 
@@ -22,29 +22,40 @@ namespace Player
         [SerializeField] private float playerMoveSpeed = 1f;
         
         [SerializeField] private ChessGrid chessGrid;
-        [SerializeField] private int numberOfSpacesPlayerIsFromBack = 4;
         
         private static readonly int QUEUE_SIZE = 4;
 
-        private List<Vector3Int> possibleMoves;
+        private List<ChessMovement.ProposedSpace> possibleMoves;
 
         [SerializeField] private Transform validMoveSpriteFolder;
         [SerializeField] private GameObject validMoveSpritePrefab;
         [SerializeField] private int numberOfValidMoveSpritesToPool = 40;
         private List<GameObject> pooledValidMoveSprites;
+
         
 
         private void Awake() {
             keybinds = new Keybinds();
-            allMovements.Add(new PawnMovement(1));
-            allMovements.Add(new RookMovement(3));
-            allMovements.Add(new BishopMovement(3));
+            // allMovements.Add(new PawnMovement(1));
+            // allMovements.Add(new RookMovement(3));
+            // allMovements.Add(new BishopMovement(3));
+            allMovements.Add(new QueenMovement(3));
+            allMovements.Add(new KingMovement(1));
         }
 
         private void Start()
         {
 
             //Pool valid move sprites
+
+
+            //Display the possible movements
+
+        }
+
+        //this is really shitty design :p, don't tightly couple ur classes peeps
+        public void LoadExtraStuffCuzImStupid() {
+            
             pooledValidMoveSprites = new List<GameObject>();
             for (int i = 0; i < numberOfValidMoveSpritesToPool; i++) {
                 GameObject instantiate = Instantiate(validMoveSpritePrefab, validMoveSpriteFolder);
@@ -64,8 +75,7 @@ namespace Player
             {
                 AddNextMovement();
             }
-
-            //Display the possible movements
+            
             ShowPossibleSpaces();
         }
         
@@ -77,19 +87,24 @@ namespace Player
             DisplaySpaces(possibleMoves);
         }
 
-        private void DisplaySpaces(List<Vector3Int> allowedSpacesToMoveToo)
+        private void DisplaySpaces(List<ChessMovement.ProposedSpace> allowedSpacesToMoveToo)
         {
-            foreach (Vector3Int space in allowedSpacesToMoveToo) {
+            foreach (ChessMovement.ProposedSpace space in allowedSpacesToMoveToo) {
                 GameObject pooledValidSprite = GetPooledValidSprite();
-                pooledValidSprite.transform.position = chessGrid.grid.GetCellCenterWorld(space);
+                pooledValidSprite.transform.position = chessGrid.grid.GetCellCenterWorld(space.position);
                 pooledValidSprite.SetActive(true);
+                if (space.containsEnemy) {
+                    pooledValidSprite.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0);
+                } else {
+                    pooledValidSprite.GetComponent<SpriteRenderer>().color = new Color(0, 1, 0);
+                }
             }
         }
 
         void OnClickOnBoard(InputAction.CallbackContext context)
         {
             Vector2 mousePos = camera.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-            Vector2Int cellMouseIsIn = (Vector2Int) chessGrid.grid.WorldToCell(mousePos);
+            Vector3Int cellMouseIsIn = chessGrid.grid.WorldToCell(mousePos);
 
             if (!IsMouseContained(cellMouseIsIn)) return;
             
@@ -99,17 +114,21 @@ namespace Player
             DeactivateAllValidSprites();
             
             StartCoroutine(MoveTo(cellMouseIsIn));
-            
-
         }
 
-        IEnumerator MoveTo(Vector2Int cellMouseIsIn) {
+        private bool firstTime = true;
+        
+        IEnumerator MoveTo(Vector3Int cellMouseIsIn) {
             Vector3 targetPosition = chessGrid.grid.GetCellCenterWorld((Vector3Int) cellMouseIsIn);
+
+            
             while (transform.position != targetPosition) {
                 Vector3 nextPos = Vector3.MoveTowards(transform.position, targetPosition, playerMoveSpeed * Time.deltaTime);
                 transform.position = nextPos;
                 yield return new WaitForEndOfFrame();
             }
+            
+            chessGrid.CheckIfFirstGridIsStillVisible();
             
             //Add new movement
             AddNextMovement();
@@ -124,11 +143,11 @@ namespace Player
             queuedMovements.Enqueue(allMovements[index]);
         }
 
-        private bool IsMouseContained(Vector2Int worldToCell)
+        private bool IsMouseContained(Vector3Int worldToCell)
         {
-            foreach (Vector2Int cell in possibleMoves)
+            foreach (ChessMovement.ProposedSpace cell in possibleMoves)
             {
-                if (cell.Equals(worldToCell))
+                if (cell.position.Equals(worldToCell))
                 {
                     return true;
                 }

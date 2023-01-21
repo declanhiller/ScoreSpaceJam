@@ -9,9 +9,13 @@ public class CameraController : MonoBehaviour {
     [SerializeField] private ChessGrid chessGrid;
     [SerializeField] private Transform player;
 
+    [SerializeField] private float xOffset = 3f;
+    private float finalXPos;
+    
     private const float zOffset = -10;
 
     private float yOffsetValue;
+    
     
     private void Start() {
         // Vector3Int playerCellPos = chessGrid.grid.WorldToCell(player.position);
@@ -19,10 +23,16 @@ public class CameraController : MonoBehaviour {
         // Vector3 finalCameraPos = chessGrid.grid.GetCellCenterWorld(playerCellPos);
         // finalCameraPos.Set(finalCameraPos.x, finalCameraPos.y + chessGrid.grid.cellSize.y - chessGrid.grid.cellSize.y/2, zOffset);
         yOffsetValue = (chessGrid.grid.cellSize.y * cameraCellOffset) - (chessGrid.grid.cellSize.y/2);
+        finalXPos = player.position.x + xOffset;
+
     }
 
     private void Update() {
-        transform.position = new Vector3(player.position.x, player.position.y + yOffsetValue, zOffset);
+        float yPos = player.position.y + yOffsetValue;
+        if (yPos > transform.position.y) { 
+            transform.position = new Vector3(0, yPos, zOffset);
+        }
+        
     }
     
     

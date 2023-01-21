@@ -1,12 +1,10 @@
-using System;
 using System.Collections.Generic;
 using Player;
 using UnityEngine;
 
 namespace ChessMovements {
-    public class BishopMovement : ChessMovement {
-        
-        public BishopMovement(int actualDistance) : base(actualDistance) {
+    public class QueenMovement : ChessMovement {
+        public QueenMovement(int actualDistance) : base(actualDistance) {
         }
 
         public override List<ProposedSpace> AllowedSpacesToMoveToo(ChessGrid grid, Vector3Int cellPieceIsIn) {
@@ -14,8 +12,8 @@ namespace ChessMovements {
 
             for (int i = -1; i <= 1; i++) {
                 for (int j = -1; j <= 1; j++) {
-                    if(i == 0 || j == 0) continue;
-                    for (int k = 1; k <= distance; k++) {
+                    for (int k = 1; k <= actualDistance; k++) {
+                        if (i == 0 && j == 0) break;
                         ProposedSpace space = new ProposedSpace();
                         Vector3Int cellLocation = new Vector3Int(cellPieceIsIn.x + i * k, cellPieceIsIn.y + j * k);
                         space.position = cellLocation;
@@ -26,8 +24,10 @@ namespace ChessMovements {
                             break;
                         }
                     }
+                    
                 }
             }
+            
 
             return returnList;
         }

@@ -6,13 +6,13 @@ namespace ChessMovements {
     public class PawnMovement : ChessMovement {
         
         
-        public override List<Vector3Int> AllowedSpacesToMoveToo(ChessGrid grid, Vector3Int cellPieceIsIn) {
+        public override List<ProposedSpace> AllowedSpacesToMoveToo(ChessGrid grid, Vector3Int cellPieceIsIn) {
             Vector3Int availableSpace = new Vector3Int(cellPieceIsIn.x, cellPieceIsIn.y + actualDistance);
-            List<Vector3Int> returnList = new List<Vector3Int>();
+            List<ProposedSpace> returnList = new List<ProposedSpace>();
             
-            returnList.Add(availableSpace);
+            // returnList.Add(availableSpace);
             
-            return returnList;
+            return null;
         }
 
         public PawnMovement(int actualDistance) : base(actualDistance) {

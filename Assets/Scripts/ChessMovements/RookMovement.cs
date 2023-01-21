@@ -8,34 +8,41 @@ namespace ChessMovements {
         public RookMovement(int actualDistance) : base(actualDistance) {
         }
 
-        public override List<Vector3Int> AllowedSpacesToMoveToo(ChessGrid grid, Vector3Int cellPieceIsIn) {
-            List<Vector3Int> returnList = new List<Vector3Int>();
+        public override List<ProposedSpace> AllowedSpacesToMoveToo(ChessGrid grid, Vector3Int cellPieceIsIn) {
+            List<ProposedSpace> returnList = new List<ProposedSpace>();
 
             for (int i = 0; i < 4; i++) {
                 for (int j = 1; j <= actualDistance; j++) {
-                    Vector3Int proposedSpace = new Vector3Int(cellPieceIsIn.x, cellPieceIsIn.y);
+                    Vector3Int position = new Vector3Int(cellPieceIsIn.x, cellPieceIsIn.y);
+                    ProposedSpace proposedSpace = new ProposedSpace();
+
                     switch (i) {
                         case 0:
-                            proposedSpace.Set(proposedSpace.x + j, proposedSpace.y, 0);
+                            position.Set(position.x + j, position.y, 0);
                             break;
                         case 1:
-                            proposedSpace.Set(proposedSpace.x - j, proposedSpace.y, 0);
+                            position.Set(position.x - j, position.y, 0);
                             break;
                         case 2:
-                            proposedSpace.Set(proposedSpace.x, proposedSpace.y + j, 0);
+                            position.Set(position.x, position.y + j, 0);
                             break;
                         case 3:
-                            proposedSpace.Set(proposedSpace.x, proposedSpace.y - j, 0);
+                            position.Set(position.x, position.y - j, 0);
                             break;
                     }
 
-                    if(!grid.IsCellContained(proposedSpace)) continue;
+                    if(!grid.IsCellContained(position)) continue;
+                    proposedSpace.containsEnemy = grid.ContainsEnemy(position);
+                    proposedSpace.position = position;
                     returnList.Add(proposedSpace);
+                    if (proposedSpace.containsEnemy) break;
                 }
             }
 
             return returnList;
 
         }
+
+
     }
 }

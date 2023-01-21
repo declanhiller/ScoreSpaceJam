@@ -27,6 +27,11 @@ namespace Player
         
         private List<IAbility> abilities = new List<IAbility>();
 
-        public abstract List<Vector3Int> AllowedSpacesToMoveToo(ChessGrid grid, Vector3Int cellPieceIsIn);
+        public abstract List<ProposedSpace> AllowedSpacesToMoveToo(ChessGrid grid, Vector3Int cellPieceIsIn);
+        
+        public struct ProposedSpace {
+            public bool containsEnemy;
+            public Vector3Int position;
+        }
     }
 }
