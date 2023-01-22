@@ -24,6 +24,5 @@ public class PieceQueue : MonoBehaviour {
         rectTransform.position = new Vector2(screenPos.x, screenPos.y);
     }
     
-    // public void UpdateDisplay()
 
 }

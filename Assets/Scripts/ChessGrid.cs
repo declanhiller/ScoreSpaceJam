@@ -10,6 +10,8 @@ public class ChessGrid : MonoBehaviour {
     [SerializeField] private Grid internalGrid;
 
     private static ChessGrid INSTANCE;
+
+    private Camera cam;
     
     [SerializeField] private Tilemap tilemap;
     [SerializeField] private TileBase whiteTile;
@@ -30,7 +32,7 @@ public class ChessGrid : MonoBehaviour {
     private const int bottomMargin = -4;
 
     private float visibleBottomY;
-    private float visibleTopY;
+    private float numOfCellsOnScreen = 10;
 
     private bool hasGenerated;
     private bool finishedPrelimGeneration;
@@ -38,7 +40,7 @@ public class ChessGrid : MonoBehaviour {
     private int furthestGeneratedY;
 
     [SerializeField] private int queueSize = 3;
-    private EnclosedGrid[] enclosedGridsQueue;
+    public EnclosedGrid[] enclosedGridsQueue;
 
     
     
@@ -49,8 +51,11 @@ public class ChessGrid : MonoBehaviour {
             enclosedGridsQueue[i] = GenerateGrid();
         }
         finishedPrelimGeneration = true;
+        cam = Camera.main;
         player.LoadExtraStuffCuzImStupid();
     }
+    
+    
 
     public void CheckIfFirstGridIsStillVisible() {
         EnclosedGrid enclosedGrid = enclosedGridsQueue[0];
@@ -114,7 +119,13 @@ public class ChessGrid : MonoBehaviour {
     }
 
     private void CleanUpOldGrid() {
-        foreach (Vector3Int cell in enclosedGridsQueue[0].spaces) {
+        foreach (Vector3Int cell in enclosedGridsQueue[0].spaces)
+        {
+            List<Enemy> enemies = enclosedGridsQueue[0].enemies;
+            foreach (Enemy enemy in enemies)
+            {
+                Destroy(enemy.gameObject);
+            }
             tilemap.SetTile(cell, null);
         }
     }
@@ -130,5 +141,28 @@ public class ChessGrid : MonoBehaviour {
         }
 
         return false;
+    }
+
+    public void MoveEnemies()
+    {
+        List<Enemy> visibleEnemies = GetVisibleEnemies();
+        foreach (Enemy enemy in visibleEnemies)
+        {
+            enemy.Activate();
+        }
+    }
+
+    private List<Enemy> GetVisibleEnemies()
+    {
+        List<Enemy> enemies = new List<Enemy>();
+        foreach (EnclosedGrid grid in enclosedGridsQueue) {
+            foreach (Enemy enemy in grid.enemies) {
+                Vector3 screenPoint = Camera.main.WorldToViewportPoint(this.grid.GetCellCenterWorld(enemy.cellPosition));
+                bool onScreen = screenPoint.x > 0 && screenPoint.x < 1 && screenPoint.y > 0 && screenPoint.y < 1;
+                if(onScreen) enemies.Add(enemy);
+            }
+        }
+        
+        return enemies;
     }
 }

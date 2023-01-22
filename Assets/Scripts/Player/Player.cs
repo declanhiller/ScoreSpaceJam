@@ -36,11 +36,11 @@ namespace Player
 
         private void Awake() {
             keybinds = new Keybinds();
-            // allMovements.Add(new PawnMovement(1));
-            // allMovements.Add(new RookMovement(3));
-            // allMovements.Add(new BishopMovement(3));
+            allMovements.Add(new RookMovement(3));
+            allMovements.Add(new BishopMovement(3));
             allMovements.Add(new QueenMovement(3));
             allMovements.Add(new KingMovement(1));
+            allMovements.Add(new KnightMovement(1));
         }
 
         private void Start()
@@ -135,6 +135,7 @@ namespace Player
             
             ShowPossibleSpaces();
 
+            chessGrid.MoveEnemies();
         }
 
         private void AddNextMovement()
