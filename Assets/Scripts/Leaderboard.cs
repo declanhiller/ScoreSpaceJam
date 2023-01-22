@@ -21,7 +21,7 @@ namespace DefaultNamespace {
 
             lootLockerManager = LootLockerManager.INSTANCE;
 
-            internalPlayerName.text = lootLockerManager.playerName;
+            internalPlayerName.text = "You";
 
             //Get the leaderboard and actually create
             lootLockerManager.SubmitScore(lootLockerManager.playerScore, (resp) => {
