@@ -13,11 +13,13 @@ public class LootLockerManager : MonoBehaviour {
 
     // public event Action<LootLockerSessionResponse> OnSessionStart;
     public event Action<LootLockerGuestSessionResponse> OnGuestSessionStart;
-    public event Action<LootLockerSubmitScoreResponse> OnSubmittedScore;
     public event Action<PlayerNameResponse> OnPlayerNameSet;
     public event Action OnFail;
 
     public string playerName { get; private set; }
+    public int playerScore { get; set; }
+    public int playerRank { get; set; }
+    
 
 
     private void Awake() {
@@ -47,19 +49,27 @@ public class LootLockerManager : MonoBehaviour {
                 }
 
                 playerName = playerNameResponse.name;
+                LootLockerSDKManager.GetMemberRank(LEADERBOARD_KEY, playerName, (resp) => {
+                    playerScore = resp.score;
+                    playerRank = resp.rank;
+                });
                 OnGuestSessionStart?.Invoke(resp);
             });
         });
     }
 
-    public void SubmitScore(int score) {
-        LootLockerSDKManager.SubmitScore(playerName, score, LEADERBOARD_KEY, OnSubmittedScore);
+    public void SubmitScore(int score, Action<LootLockerSubmitScoreResponse> onResp) {
+        LootLockerSDKManager.SubmitScore(playerName, score, LEADERBOARD_KEY, onResp);
+    }
+
+    public void GetScore(Action<LootLockerGetMemberRankResponse> onResp) {
+        LootLockerSDKManager.GetMemberRank(LEADERBOARD_KEY, playerName, onResp);
     }
 
     public async Task<LootLockerGetScoreListResponse> GetScoreListAsync() {
         TaskCompletionSource<LootLockerGetScoreListResponse> tcs1 = new TaskCompletionSource<LootLockerGetScoreListResponse>();
         
-        LootLockerSDKManager.GetScoreList(LEADERBOARD_KEY, 5, 5, async (resp) => {
+        LootLockerSDKManager.GetScoreList(LEADERBOARD_KEY, 5, 0, async (resp) => {
             if (!resp.success) {
                 Debug.Log("Failed");
                 return;
@@ -70,14 +80,7 @@ public class LootLockerManager : MonoBehaviour {
         return await tcs1.Task;
     }
     
-    static void MethodA(string message)
-    {
-        Console.WriteLine(message);
-    }
-    
-    
-    
-    
+
     private bool DidFail(LootLockerResponse resp, Action onFail) {
         if (!resp.success) {
             onFail.Invoke();

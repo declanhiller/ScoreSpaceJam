@@ -19,8 +19,8 @@ public class GameStartController : MonoBehaviour {
 
     [Header("Name Form")]
     [SerializeField] private TMP_InputField nameInput;
-    
-    
+
+
     private void Awake() {
 
     }

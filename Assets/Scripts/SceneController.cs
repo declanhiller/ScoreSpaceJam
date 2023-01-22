@@ -1,11 +1,12 @@
 using System;
+using LootLocker.Requests;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class SceneController : MonoBehaviour {
 
-    private static SceneController INSTANCE;
-    
+    public static SceneController INSTANCE;
+
     private void Awake() {
         if (INSTANCE != null) {
             Destroy(gameObject);
@@ -14,6 +15,8 @@ public class SceneController : MonoBehaviour {
             INSTANCE = this;
         }
     }
+    
+    
 
 
     public void StartGame() {

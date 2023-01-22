@@ -38,9 +38,9 @@ namespace Player
         [SerializeField] private int numberOfValidMoveSpritesToPool = 40;
         private List<GameObject> pooledValidMoveSprites;
 
-        private int score;
+        public int score { get; private set; }
 
-        
+
 
         private void Awake() {
             keybinds = new Keybinds();

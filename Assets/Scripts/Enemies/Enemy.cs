@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Player;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 namespace Enemies {
@@ -18,6 +19,8 @@ namespace Enemies {
         [NonSerialized] public bool moving;
 
         public Vector3Int cellPosition { get; set; }
+
+        private bool isGoingToLose;
 
         public void GiveRandomAbility() {
             
@@ -39,12 +42,11 @@ namespace Enemies {
                 }
 
                 if (tmpDistance == 0) {
-                    Debug.Log("You lose");
+                    isGoingToLose = true;
                 }
             }
 
             StartCoroutine(MoveTo(closetSpace.position));
-
         }
         
         IEnumerator MoveTo(Vector3Int targetCellPos) {
@@ -54,6 +56,11 @@ namespace Enemies {
                 Vector3 nextPos = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
                 transform.position = nextPos;
                 yield return new WaitForEndOfFrame();
+            }
+
+            if (isGoingToLose) {
+                LootLockerManager.INSTANCE.playerScore = player.score;
+                SceneController.INSTANCE.Leaderboard();
             }
 
             cellPosition = targetCellPos;
@@ -66,6 +73,7 @@ namespace Enemies {
                 chessGrid.enemies.Remove(this);
                 Destroy(gameObject);
             }
+            
         }
         
         
