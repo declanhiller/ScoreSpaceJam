@@ -15,14 +15,16 @@ namespace Enemies {
 
         [SerializeField] private float moveSpeed;
 
+        [NonSerialized] public bool moving;
+
         public Vector3Int cellPosition { get; set; }
 
         public void GiveRandomAbility() {
             
         }
 
-        public void Activate()
-        {
+        public void Activate() {
+            moving = true;
             List<ChessMovement.ProposedSpace> allowedSpacesToMoveToo = chessMovement.AllowedSpacesToMoveToo(chessGrid, cellPosition);
             ChessMovement.ProposedSpace closetSpace = allowedSpacesToMoveToo[0];
             Vector3Int playerCellPos = chessGrid.grid.WorldToCell(player.transform.position);
@@ -34,6 +36,10 @@ namespace Enemies {
                 {
                     smallestDist = tmpDistance;
                     closetSpace = space;
+                }
+
+                if (tmpDistance == 0) {
+                    Debug.Log("You lose");
                 }
             }
 
@@ -52,8 +58,14 @@ namespace Enemies {
 
             cellPosition = targetCellPos;
             
-            // foreach(EnclosedGrid grid in chessGrid.gri)
+            Vector3 screenPoint = Camera.main.WorldToViewportPoint(chessGrid.grid.GetCellCenterWorld(cellPosition));
+
+            moving = false;
             
+            if (screenPoint.y < 0) {
+                chessGrid.enemies.Remove(this);
+                Destroy(gameObject);
+            }
         }
         
         

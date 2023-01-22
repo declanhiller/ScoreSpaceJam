@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Enemies;
+using Player;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Random = System.Random;
@@ -41,6 +43,10 @@ public class ChessGrid : MonoBehaviour {
 
     [SerializeField] private int queueSize = 3;
     public EnclosedGrid[] enclosedGridsQueue;
+
+    public List<Enemy> enemies = new List<Enemy>();
+
+    public event Action onEnemyFinishMoving;
 
     
     
@@ -121,48 +127,68 @@ public class ChessGrid : MonoBehaviour {
     private void CleanUpOldGrid() {
         foreach (Vector3Int cell in enclosedGridsQueue[0].spaces)
         {
-            List<Enemy> enemies = enclosedGridsQueue[0].enemies;
-            foreach (Enemy enemy in enemies)
-            {
-                Destroy(enemy.gameObject);
-            }
             tilemap.SetTile(cell, null);
         }
     }
 
 
     public bool ContainsEnemy(Vector3Int position) {
-        foreach (EnclosedGrid grid in enclosedGridsQueue) {
-            foreach (Enemy enemy in grid.enemies) {
-                if (enemy.cellPosition == position) {
-                    return true;
-                }
+        foreach (Enemy enemy in enemies) {
+            if (enemy.cellPosition == position) {
+                return true;
             }
         }
 
         return false;
     }
 
+    public bool ContainsEnemy(Vector3Int position, out Enemy output) {
+        foreach (Enemy enemy in enemies) {
+            if (enemy.cellPosition == position) {
+                output = enemy;
+                return true;
+            }
+        }
+
+        output = null;
+        return false;
+    }
+
     public void MoveEnemies()
     {
         List<Enemy> visibleEnemies = GetVisibleEnemies();
-        foreach (Enemy enemy in visibleEnemies)
-        {
+        foreach (Enemy enemy in visibleEnemies) {
             enemy.Activate();
         }
+        StartCoroutine(CheckIfEnemiesAreDone());
+    }
+
+    IEnumerator CheckIfEnemiesAreDone() {
+        bool enemiesStillMoving = true;
+        while (enemiesStillMoving) {
+            enemiesStillMoving = false;
+            foreach (Enemy enemy in enemies) {
+                if (enemy.moving) {
+                    enemiesStillMoving = true;
+                    break;
+                }
+            }
+            
+            yield return new WaitForEndOfFrame();
+        }
+        Debug.Log("Show possible spaces");
+        onEnemyFinishMoving.Invoke();
     }
 
     private List<Enemy> GetVisibleEnemies()
     {
-        List<Enemy> enemies = new List<Enemy>();
-        foreach (EnclosedGrid grid in enclosedGridsQueue) {
-            foreach (Enemy enemy in grid.enemies) {
-                Vector3 screenPoint = Camera.main.WorldToViewportPoint(this.grid.GetCellCenterWorld(enemy.cellPosition));
-                bool onScreen = screenPoint.x > 0 && screenPoint.x < 1 && screenPoint.y > 0 && screenPoint.y < 1;
-                if(onScreen) enemies.Add(enemy);
-            }
+        List<Enemy> returnList = new List<Enemy>();
+        foreach (Enemy enemy in enemies) {
+            Vector3 screenPoint = Camera.main.WorldToViewportPoint(this.grid.GetCellCenterWorld(enemy.cellPosition));
+            bool onScreen = screenPoint.x > 0 && screenPoint.x < 1 && screenPoint.y > 0 && screenPoint.y < 1;
+            if(onScreen) returnList.Add(enemy);
         }
-        
-        return enemies;
+
+        return returnList;
     }
 }

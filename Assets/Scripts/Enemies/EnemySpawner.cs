@@ -28,6 +28,7 @@ namespace Enemies {
             foreach (Vector3Int cell in randomValues) {
                 Enemy newEnemy = CreateNewEnemy(cellGrid.grid.GetCellCenterWorld(cell));
                 newEnemy.cellPosition = cell;
+                cellGrid.enemies.Add(newEnemy);
                 grid.enemies.Add(newEnemy);
             }
             

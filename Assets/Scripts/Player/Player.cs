@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using ChessMovements;
+using Enemies;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Pool;
@@ -22,6 +23,8 @@ namespace Player
         [SerializeField] private float playerMoveSpeed = 1f;
         
         [SerializeField] private ChessGrid chessGrid;
+
+        [SerializeField] private PieceQueue pieceQueue;
         
         private static readonly int QUEUE_SIZE = 4;
 
@@ -76,13 +79,19 @@ namespace Player
                 AddNextMovement();
             }
             
+            pieceQueue.UpdateDisplay(queuedMovements);
+
             ShowPossibleSpaces();
+
+            chessGrid.onEnemyFinishMoving += ShowPossibleSpaces;
+            
+
         }
         
 
         private void ShowPossibleSpaces()
         {
-            ChessMovement chessMovement = queuedMovements.Peek();
+            ChessMovement chessMovement = queuedMovements.Dequeue();
             possibleMoves = chessMovement.AllowedSpacesToMoveToo(chessGrid, chessGrid.grid.WorldToCell(transform.position));
             DisplaySpaces(possibleMoves);
         }
@@ -109,7 +118,7 @@ namespace Player
             if (!IsMouseContained(cellMouseIsIn)) return;
             
             
-            queuedMovements.Dequeue();
+            // queuedMovements.Dequeue();
             
             DeactivateAllValidSprites();
             
@@ -130,16 +139,20 @@ namespace Player
             
             chessGrid.CheckIfFirstGridIsStillVisible();
             
-            //Add new movement
             AddNextMovement();
             
-            ShowPossibleSpaces();
+            pieceQueue.UpdateDisplay(queuedMovements);
+
+            bool containsEnemy = chessGrid.ContainsEnemy(cellMouseIsIn, out var enemy);
+            if (containsEnemy) {
+                chessGrid.enemies.Remove(enemy);
+                Destroy(enemy.gameObject);
+            }
 
             chessGrid.MoveEnemies();
         }
 
-        private void AddNextMovement()
-        {
+        private void AddNextMovement() {
             int index = Random.Range(0, allMovements.Count);
             queuedMovements.Enqueue(allMovements[index]);
         }
