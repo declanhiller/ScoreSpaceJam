@@ -632,7 +632,7 @@ MonoBehaviour:
   playerMoveSpeed: 10
   chessGrid: {fileID: 2027077132}
   pieceQueue: {fileID: 298907087}
-  scoreText: {fileID: 0}
+  scoreText: {fileID: 25567103}
   validMoveSpriteFolder: {fileID: 1881841893}
   validMoveSpritePrefab: {fileID: 1091068123}
   numberOfValidMoveSpritesToPool: 40
