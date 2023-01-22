@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using ChessMovements;
 using Enemies;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Pool;
@@ -25,6 +26,8 @@ namespace Player
         [SerializeField] private ChessGrid chessGrid;
 
         [SerializeField] private PieceQueue pieceQueue;
+
+        [SerializeField] private TextMeshProUGUI scoreText;
         
         private static readonly int QUEUE_SIZE = 4;
 
@@ -34,6 +37,8 @@ namespace Player
         [SerializeField] private GameObject validMoveSpritePrefab;
         [SerializeField] private int numberOfValidMoveSpritesToPool = 40;
         private List<GameObject> pooledValidMoveSprites;
+
+        private int score;
 
         
 
@@ -51,6 +56,7 @@ namespace Player
 
             //Pool valid move sprites
 
+            score = 0;
 
             //Display the possible movements
 
@@ -130,13 +136,19 @@ namespace Player
         IEnumerator MoveTo(Vector3Int cellMouseIsIn) {
             Vector3 targetPosition = chessGrid.grid.GetCellCenterWorld((Vector3Int) cellMouseIsIn);
 
-            
+            int scoreIncrease = cellMouseIsIn.y - chessGrid.grid.WorldToCell(transform.position).y;
+
             while (transform.position != targetPosition) {
                 Vector3 nextPos = Vector3.MoveTowards(transform.position, targetPosition, playerMoveSpeed * Time.deltaTime);
                 transform.position = nextPos;
                 yield return new WaitForEndOfFrame();
             }
-            
+
+            if (scoreIncrease > 0) {
+                score += scoreIncrease;
+                scoreText.text = "" + score;
+            }
+
             chessGrid.CheckIfFirstGridIsStillVisible();
             
             AddNextMovement();
