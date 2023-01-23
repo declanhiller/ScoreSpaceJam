@@ -26,6 +26,7 @@ public class PieceChooser : MonoBehaviour {
     
     private void Awake() {
         possibleAbilities = new List<Ability>();
+        possibleAbilities.Add(new TestAbility(10));
     }
 
 
@@ -57,16 +58,19 @@ public class PieceChooser : MonoBehaviour {
 
     public void SelectPiece1() {
         selectableMovements[0].abilities.Add(displayedAbility);
+        selectableMovements[0].distance += 1;
         onSelect.Invoke();
     }
 
     public void SelectPiece2() {
-        selectableMovements[0].abilities.Add(displayedAbility);
+        selectableMovements[1].abilities.Add(displayedAbility);
+        selectableMovements[1].distance += 1;
         onSelect.Invoke();
     }
 
     public void SelectPiece3() {
-        selectableMovements[0].abilities.Add(displayedAbility);
+        selectableMovements[2].abilities.Add(displayedAbility);
+        selectableMovements[2].distance += 1;
         onSelect.Invoke();
     }
 }

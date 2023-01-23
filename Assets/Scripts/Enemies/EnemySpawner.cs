@@ -22,8 +22,9 @@ namespace Enemies {
 
         [SerializeField] private ChessGrid cellGrid;
 
+        [NonSerialized] public float enemyDensity = 0.05f;
+
         public void SpawnNewEnemiesforEnclosedGrid(EnclosedGrid grid) {
-            float enemyDensity = 0.05f;
             int numberOfCells = grid.spaces.GetLength(0) * grid.spaces.GetLength(1);
             int numberOfEnemies = (int) (enemyDensity * numberOfCells);
 
@@ -75,25 +76,27 @@ namespace Enemies {
 
         public void CreateNewRook(GameObject obj)
         {
-            obj.GetComponent<Enemy>().SetChessMovement(new RookMovement(3));
+            int range = Random.Range(1, 6);
+            obj.GetComponent<Enemy>().SetChessMovement(new RookMovement(range));
             obj.GetComponent<SpriteRenderer>().sprite = rook;
         }
 
         public void CreateNewBishop(GameObject obj)
         {
-            obj.GetComponent<Enemy>().SetChessMovement(new BishopMovement(3));
+            int range = Random.Range(1, 6);
+            obj.GetComponent<Enemy>().SetChessMovement(new BishopMovement(range));
             obj.GetComponent<SpriteRenderer>().sprite = bishop;
         }
 
-        public void CreateNewQueen(GameObject obj)
-        {
-            obj.GetComponent<Enemy>().SetChessMovement(new QueenMovement(5));
+        public void CreateNewQueen(GameObject obj) {
+            int range = Random.Range(1, 6);
+            obj.GetComponent<Enemy>().SetChessMovement(new QueenMovement(range));
             obj.GetComponent<SpriteRenderer>().sprite = queen;
         }
 
         public void CreateNewKnight(GameObject obj)
         {
-            obj.GetComponent<Enemy>().SetChessMovement(new KingMovement(1));
+            obj.GetComponent<Enemy>().SetChessMovement(new KnightMovement(1));
             obj.GetComponent<SpriteRenderer>().sprite = knight;
         }
 

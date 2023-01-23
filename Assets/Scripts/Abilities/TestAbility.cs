@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace Player {
     public class TestAbility : Ability {
         
@@ -5,19 +7,19 @@ namespace Player {
         }
 
         public override void Tick() {
-            throw new System.NotImplementedException();
+            
         }
 
         public override void Activate(Player player) {
-            throw new System.NotImplementedException();
+            Debug.Log("Activate test ability");
         }
 
         public override bool IsDone() {
-            throw new System.NotImplementedException();
+            return true;
         }
 
         public override string GetDescription() {
-            throw new System.NotImplementedException();
+            return "This is a test ability";
         }
 
         public override object Clone() {

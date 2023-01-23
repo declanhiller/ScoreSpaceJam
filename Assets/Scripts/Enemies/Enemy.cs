@@ -14,7 +14,8 @@ namespace Enemies {
 
         [SerializeField] private ChessGrid chessGrid;
         [SerializeField] private Player.Player player;
-
+        
+        
         [SerializeField] private Transform uiMarker;
 
         [NonSerialized] public GameObject moveTracker;
@@ -31,6 +32,8 @@ namespace Enemies {
 
         private void Start() {
             camera = Camera.main;
+            player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player.Player>();
+            chessGrid = GameObject.FindGameObjectWithTag("Grid").GetComponent<ChessGrid>();
         }
 
         public void SetChessMovement(ChessMovement movement) {

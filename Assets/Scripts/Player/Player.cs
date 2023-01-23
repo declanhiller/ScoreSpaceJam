@@ -22,6 +22,8 @@ namespace Player
         
         private Camera camera;
 
+        private SpriteRenderer renderer;
+
         [SerializeField] private float playerMoveSpeed = 1f;
         
         [SerializeField] private ChessGrid chessGrid;
@@ -29,6 +31,12 @@ namespace Player
         [SerializeField] private PieceQueue pieceQueue;
 
         [SerializeField] private TextMeshProUGUI scoreText;
+
+        [SerializeField] private Sprite bishop;
+        [SerializeField] private Sprite king;
+        [SerializeField] private Sprite knight;
+        [SerializeField] private Sprite queen;
+        [SerializeField] private Sprite rook;
         
         private static readonly int QUEUE_SIZE = 4;
 
@@ -40,13 +48,20 @@ namespace Player
         [SerializeField] private int numberOfValidMoveSpritesToPool = 40;
         private List<GameObject> pooledValidMoveSprites;
 
+        [SerializeField] private EnemySpawner spawner;
+
         [SerializeField] private PieceChooser pieceChooser;
 
         private int killedEnemies = 0;
-        private int enemyIncrease = 10;
-        private int nextBenchmark = 10;
+        private int enemyIncrease = 1;
+        private int nextBenchmark = 1;
 
-        private bool canClick;
+        private int howMuchScoreToIncreaseEnemyDensity = 20;
+        private float ratioToIncreaseBy = 1.03f;
+        private int increaseEnemyCounter;
+        
+
+        private bool canClick = true;
 
         public int score { get; private set; }
 
@@ -54,19 +69,24 @@ namespace Player
 
         private void Awake() {
             keybinds = new Keybinds();
-            allMovements.Add(new RookMovement(3));
-            allMovements.Add(new BishopMovement(3));
-            allMovements.Add(new QueenMovement(3));
+            allMovements.Add(new RookMovement(2));
+            allMovements.Add(new BishopMovement(2));
+            allMovements.Add(new QueenMovement(2));
             allMovements.Add(new KingMovement(1));
             allMovements.Add(new KnightMovement(1));
         }
 
-        private void Start()
-        {
+        private void Start() {
 
+            renderer = GetComponent<SpriteRenderer>();
+            
             //Pool valid move sprites
 
             score = 0;
+            pieceChooser.gameObject.SetActive(false);
+            increaseEnemyCounter = howMuchScoreToIncreaseEnemyDensity;
+            camera = Camera.main;
+
 
             //Display the possible movements
 
@@ -86,7 +106,6 @@ namespace Player
             keybinds.Enable();
             keybinds.Player.Click.started += OnClickOnBoard;
             
-            camera = Camera.main;
 
             
             //Generate Movements for the queue
@@ -103,13 +122,28 @@ namespace Player
             
 
         }
-        
+
+        private void OnDestroy() {
+            keybinds.Player.Click.started -= OnClickOnBoard;
+        }
+
 
         private void ShowPossibleSpaces()
         {
             ChessMovement chessMovement = queuedMovements.Dequeue();
             currentShownChessMovement = chessMovement;
             possibleMoves = chessMovement.AllowedSpacesToMoveToo(chessGrid, chessGrid.grid.WorldToCell(transform.position), false);
+            if (chessMovement.GetType() == typeof(BishopMovement)) {
+                renderer.sprite = bishop;
+            } else if (chessMovement.GetType() == typeof(KingMovement)) {
+                renderer.sprite = king;
+            } else if (chessMovement.GetType() == typeof(KnightMovement)) {
+                renderer.sprite = knight;
+            } else if (chessMovement.GetType() == typeof(QueenMovement)) {
+                renderer.sprite = queen;
+            } else if (chessMovement.GetType() == typeof(RookMovement)) {
+                renderer.sprite = rook;
+            }
             DisplaySpaces(possibleMoves);
         }
 
@@ -129,8 +163,10 @@ namespace Player
 
         void OnClickOnBoard(InputAction.CallbackContext context) {
             if (!canClick) return;
-            Vector2 mousePos = camera.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+            Vector2 mousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
             Vector3Int cellMouseIsIn = chessGrid.grid.WorldToCell(mousePos);
+
+            
 
             if (!IsMouseContained(cellMouseIsIn)) return;
             
@@ -158,6 +194,12 @@ namespace Player
             if (scoreIncrease > 0) {
                 score += scoreIncrease;
                 scoreText.text = "" + score;
+                increaseEnemyCounter -= scoreIncrease;
+                if (increaseEnemyCounter <= 0) {
+                    Debug.Log("Increase enemy density");
+                    spawner.enemyDensity = spawner.enemyDensity * ratioToIncreaseBy;
+                    increaseEnemyCounter = howMuchScoreToIncreaseEnemyDensity;
+                }
             }
 
             chessGrid.CheckIfFirstGridIsStillVisible();
@@ -184,6 +226,7 @@ namespace Player
             Ability[] orderedAbilities = abilities.OrderBy(x => x.priority).ToArray();
             for (int i = 0; i < orderedAbilities.Length; i++) {
                 Ability ability = orderedAbilities[i];
+                ability.Activate(this);
                 while (!ability.IsDone()) {
                     ability.Tick();
                     yield return new WaitForEndOfFrame();
@@ -192,12 +235,21 @@ namespace Player
             chessGrid.MoveEnemies();
             
             if (killedEnemies >= nextBenchmark) {
+                Debug.Log("get next ability");
                 nextBenchmark += enemyIncrease;
                 canClick = false;
                 pieceChooser.gameObject.SetActive(true);
                 System.Random rand = new System.Random();
-                List<ChessMovement> list = allMovements.OrderBy(x => rand.Next()).Take(3).ToList();
-                pieceChooser.BringUpAbilities((() => { canClick = true;}), list);
+
+                IEnumerable<int> enumerable = Enumerable.Range(0, allMovements.Count - 1).OrderBy(x => rand.Next()).Take(3);
+                List<ChessMovement> list = new List<ChessMovement>();
+                foreach (int index in enumerable) {
+                    list.Add(allMovements[index]);
+                }
+                pieceChooser.BringUpAbilities((() => {
+                    canClick = true;
+                    pieceChooser.gameObject.SetActive(false);
+                }), list);
             }
             
         }
