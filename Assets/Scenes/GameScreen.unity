@@ -2728,8 +2728,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   internalGrid: {fileID: 2027077133}
   tilemap: {fileID: 125691263}
-  whiteTile: {fileID: 11400000, guid: 9544cd36334fd5a419f43391e0666040, type: 2}
-  blackTile: {fileID: 11400000, guid: eda86f8f4a952aa41a3c9b7b431a87bf, type: 2}
+  whiteTile: {fileID: 11400000, guid: 1d1e718c871a9fd44a9effdeec729753, type: 2}
+  blackTile: {fileID: 11400000, guid: 1fd179ab0d3c2084db97f7e5adf6c325, type: 2}
   player: {fileID: 565672019}
   enemySpawner: {fileID: 2027077135}
   outOfBoundsGenerationLength: 9
