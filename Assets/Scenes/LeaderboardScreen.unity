@@ -123,6 +123,76 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1001 &95502784
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 2
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 511273571799879927, guid: 5a7d8a63e50bac64e8d5bbe5936e2744, type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 511273571799879927, guid: 5a7d8a63e50bac64e8d5bbe5936e2744, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 695.7413
+      objectReference: {fileID: 0}
+    - target: {fileID: 511273571799879927, guid: 5a7d8a63e50bac64e8d5bbe5936e2744, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 308.9052
+      objectReference: {fileID: 0}
+    - target: {fileID: 511273571799879927, guid: 5a7d8a63e50bac64e8d5bbe5936e2744, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.27418113
+      objectReference: {fileID: 0}
+    - target: {fileID: 511273571799879927, guid: 5a7d8a63e50bac64e8d5bbe5936e2744, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 511273571799879927, guid: 5a7d8a63e50bac64e8d5bbe5936e2744, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 511273571799879927, guid: 5a7d8a63e50bac64e8d5bbe5936e2744, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 511273571799879927, guid: 5a7d8a63e50bac64e8d5bbe5936e2744, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 511273571799879927, guid: 5a7d8a63e50bac64e8d5bbe5936e2744, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 511273571799879927, guid: 5a7d8a63e50bac64e8d5bbe5936e2744, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 511273571799879927, guid: 5a7d8a63e50bac64e8d5bbe5936e2744, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 511273571799879929, guid: 5a7d8a63e50bac64e8d5bbe5936e2744, type: 3}
+      propertyPath: m_Name
+      value: Scene Controller
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_AddedGameObjects: []
+  m_SourcePrefab: {fileID: 100100000, guid: 5a7d8a63e50bac64e8d5bbe5936e2744, type: 3}
+--- !u!114 &95502785 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 511273571799879926, guid: 5a7d8a63e50bac64e8d5bbe5936e2744, type: 3}
+  m_PrefabInstance: {fileID: 95502784}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c86c9062ae1d4ee8969b326990604fc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &121386965
 GameObject:
   m_ObjectHideFlags: 0
@@ -1053,7 +1123,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 372078363}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 95502785}
+        m_TargetAssemblyTypeName: SceneController, Assembly-CSharp
+        m_MethodName: StartScreen
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &372078363
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4643,7 +4725,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1769326670}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 95502785}
+        m_TargetAssemblyTypeName: SceneController, Assembly-CSharp
+        m_MethodName: StartGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1769326670
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using ChessMovements;
 using Enemies;
 using TMPro;
@@ -32,11 +33,20 @@ namespace Player
         private static readonly int QUEUE_SIZE = 4;
 
         private List<ChessMovement.ProposedSpace> possibleMoves;
+        private ChessMovement currentShownChessMovement;
 
         [SerializeField] private Transform validMoveSpriteFolder;
         [SerializeField] private GameObject validMoveSpritePrefab;
         [SerializeField] private int numberOfValidMoveSpritesToPool = 40;
         private List<GameObject> pooledValidMoveSprites;
+
+        [SerializeField] private PieceChooser pieceChooser;
+
+        private int killedEnemies = 0;
+        private int enemyIncrease = 10;
+        private int nextBenchmark = 10;
+
+        private bool canClick;
 
         public int score { get; private set; }
 
@@ -98,6 +108,7 @@ namespace Player
         private void ShowPossibleSpaces()
         {
             ChessMovement chessMovement = queuedMovements.Dequeue();
+            currentShownChessMovement = chessMovement;
             possibleMoves = chessMovement.AllowedSpacesToMoveToo(chessGrid, chessGrid.grid.WorldToCell(transform.position), false);
             DisplaySpaces(possibleMoves);
         }
@@ -116,8 +127,8 @@ namespace Player
             }
         }
 
-        void OnClickOnBoard(InputAction.CallbackContext context)
-        {
+        void OnClickOnBoard(InputAction.CallbackContext context) {
+            if (!canClick) return;
             Vector2 mousePos = camera.ScreenToWorldPoint(Mouse.current.position.ReadValue());
             Vector3Int cellMouseIsIn = chessGrid.grid.WorldToCell(mousePos);
 
@@ -157,12 +168,40 @@ namespace Player
 
             bool containsEnemy = chessGrid.ContainsEnemy(cellMouseIsIn, out var enemy);
             if (containsEnemy) {
+                killedEnemies++;
                 chessGrid.enemies.Remove(enemy);
                 Destroy(enemy.gameObject);
             }
 
-            chessGrid.MoveEnemies();
+            //activate abilities first
+            StartCoroutine(ActivateAbilities());
+            
         }
+        
+
+        IEnumerator ActivateAbilities() {
+            List<Ability> abilities = currentShownChessMovement.abilities;
+            Ability[] orderedAbilities = abilities.OrderBy(x => x.priority).ToArray();
+            for (int i = 0; i < orderedAbilities.Length; i++) {
+                Ability ability = orderedAbilities[i];
+                while (!ability.IsDone()) {
+                    ability.Tick();
+                    yield return new WaitForEndOfFrame();
+                }
+            }
+            chessGrid.MoveEnemies();
+            
+            if (killedEnemies >= nextBenchmark) {
+                nextBenchmark += enemyIncrease;
+                canClick = false;
+                pieceChooser.gameObject.SetActive(true);
+                System.Random rand = new System.Random();
+                List<ChessMovement> list = allMovements.OrderBy(x => rand.Next()).Take(3).ToList();
+                pieceChooser.BringUpAbilities((() => { canClick = true;}), list);
+            }
+            
+        }
+        
 
         private void AddNextMovement() {
             int index = Random.Range(0, allMovements.Count);

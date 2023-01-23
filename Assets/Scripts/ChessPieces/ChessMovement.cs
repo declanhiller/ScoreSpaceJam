@@ -25,7 +25,7 @@ namespace Player
             this.actualDistance = actualDistance;
         }
         
-        private List<IAbility> abilities = new List<IAbility>();
+        public List<Ability> abilities = new List<Ability>();
 
         public abstract List<ProposedSpace> AllowedSpacesToMoveToo(ChessGrid grid, Vector3Int cellPieceIsIn, bool isEnemy);
         

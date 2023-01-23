@@ -7,16 +7,18 @@ public class SceneController : MonoBehaviour {
 
     public static SceneController INSTANCE;
 
-    private void Awake() {
-        if (INSTANCE != null) {
-            Destroy(gameObject);
-        } else {
-            DontDestroyOnLoad(gameObject);
-            INSTANCE = this;
-        }
+    // private void Awake() {
+    //     if (INSTANCE != null) {
+    //         Destroy(gameObject);
+    //     } else {
+    //         DontDestroyOnLoad(gameObject);
+    //         INSTANCE = this;
+    //     }
+    // }
+
+    private void Start() {
+        INSTANCE = this;
     }
-    
-    
 
 
     public void StartGame() {
@@ -29,9 +31,13 @@ public class SceneController : MonoBehaviour {
         SceneManager.LoadScene("LeaderboardScreen");
     }
 
-    public void Signup() {
-        
+    public void StartScreen() {
+        SceneManager.LoadScene("StartScreen");
     }
     
-    
+    public void EndGame() {
+        
+    }
+
+
 }

@@ -21,17 +21,22 @@ public class GameStartController : MonoBehaviour {
     [SerializeField] private TMP_InputField nameInput;
 
 
+    public static bool hasRun;
+
     private void Awake() {
 
     }
 
     // Start is called before the first frame update
     void Start() {
-        Enable(loadingIcon);
-        _lootLockerManager = LootLockerManager.INSTANCE;
-        _lootLockerManager.OnGuestSessionStart += OnSessionStart;
-        _lootLockerManager.OnPlayerNameSet += OnPlayerNameSet;
-        _lootLockerManager.StartGuestSession();
+        if (!hasRun) {
+            Enable(loadingIcon);
+            _lootLockerManager = LootLockerManager.INSTANCE;
+            _lootLockerManager.OnGuestSessionStart += OnSessionStart;
+            _lootLockerManager.OnPlayerNameSet += OnPlayerNameSet;
+            _lootLockerManager.StartGuestSession();
+            hasRun = true;
+        }
     }
 
     void OnSessionStart(LootLockerGuestSessionResponse resp) {
