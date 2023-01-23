@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Player;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
@@ -14,21 +15,43 @@ namespace Enemies {
         [SerializeField] private ChessGrid chessGrid;
         [SerializeField] private Player.Player player;
 
+        [SerializeField] private Transform uiMarker;
+
+        [NonSerialized] public GameObject moveTracker;
+
         [SerializeField] private float moveSpeed;
 
         [NonSerialized] public bool moving;
+
+        private Camera camera;
 
         public Vector3Int cellPosition { get; set; }
 
         private bool isGoingToLose;
 
+        private void Start() {
+            camera = Camera.main;
+        }
+
+        public void SetChessMovement(ChessMovement movement) {
+            chessMovement = movement;
+            moveTracker.GetComponentInChildren<TextMeshProUGUI>().text = "" + movement.distance;
+        }
+
         public void GiveRandomAbility() {
+            
+        }
+
+        private void LateUpdate() {
+            if (moveTracker != null) {
+                moveTracker.transform.position = camera.WorldToScreenPoint(uiMarker.position);
+            }
             
         }
 
         public void Activate() {
             moving = true;
-            List<ChessMovement.ProposedSpace> allowedSpacesToMoveToo = chessMovement.AllowedSpacesToMoveToo(chessGrid, cellPosition);
+            List<ChessMovement.ProposedSpace> allowedSpacesToMoveToo = chessMovement.AllowedSpacesToMoveToo(chessGrid, cellPosition, true);
             ChessMovement.ProposedSpace closetSpace = allowedSpacesToMoveToo[0];
             Vector3Int playerCellPos = chessGrid.grid.WorldToCell(player.transform.position);
             float smallestDist = Vector3Int.Distance(closetSpace.position, playerCellPos);
@@ -48,7 +71,7 @@ namespace Enemies {
 
             StartCoroutine(MoveTo(closetSpace.position));
         }
-        
+
         IEnumerator MoveTo(Vector3Int targetCellPos) {
             Vector3 targetPosition = chessGrid.grid.GetCellCenterWorld(targetCellPos);
 
@@ -75,8 +98,9 @@ namespace Enemies {
             }
             
         }
-        
-        
-        
+
+        private void OnDestroy() {
+            Destroy(moveTracker);
+        }
     }
 }

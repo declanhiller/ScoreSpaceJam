@@ -98,7 +98,7 @@ namespace Player
         private void ShowPossibleSpaces()
         {
             ChessMovement chessMovement = queuedMovements.Dequeue();
-            possibleMoves = chessMovement.AllowedSpacesToMoveToo(chessGrid, chessGrid.grid.WorldToCell(transform.position));
+            possibleMoves = chessMovement.AllowedSpacesToMoveToo(chessGrid, chessGrid.grid.WorldToCell(transform.position), false);
             DisplaySpaces(possibleMoves);
         }
 

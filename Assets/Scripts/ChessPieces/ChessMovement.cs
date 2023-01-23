@@ -10,7 +10,7 @@ namespace Player
 
         protected int actualDistance;
 
-        protected int distance {
+        public int distance {
             get => actualDistance;
             set {
                 if (value > maxDistance) {
@@ -27,7 +27,7 @@ namespace Player
         
         private List<IAbility> abilities = new List<IAbility>();
 
-        public abstract List<ProposedSpace> AllowedSpacesToMoveToo(ChessGrid grid, Vector3Int cellPieceIsIn);
+        public abstract List<ProposedSpace> AllowedSpacesToMoveToo(ChessGrid grid, Vector3Int cellPieceIsIn, bool isEnemy);
         
         public struct ProposedSpace {
             public bool containsEnemy;

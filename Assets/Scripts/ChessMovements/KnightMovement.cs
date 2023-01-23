@@ -15,7 +15,7 @@ namespace ChessMovements
         }
 
         //This is extraordinarily bad code that should not be used as reference
-        public override List<ProposedSpace> AllowedSpacesToMoveToo(ChessGrid grid, Vector3Int cellPieceIsIn)
+        public override List<ProposedSpace> AllowedSpacesToMoveToo(ChessGrid grid, Vector3Int cellPieceIsIn, bool isEnemy)
         {
             List<ProposedSpace> returnList = new List<ProposedSpace>();
             

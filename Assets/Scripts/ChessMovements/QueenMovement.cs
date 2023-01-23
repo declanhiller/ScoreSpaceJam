@@ -7,7 +7,7 @@ namespace ChessMovements {
         public QueenMovement(int actualDistance) : base(actualDistance) {
         }
 
-        public override List<ProposedSpace> AllowedSpacesToMoveToo(ChessGrid grid, Vector3Int cellPieceIsIn) {
+        public override List<ProposedSpace> AllowedSpacesToMoveToo(ChessGrid grid, Vector3Int cellPieceIsIn, bool isEnemy) {
             List<ProposedSpace> returnList = new List<ProposedSpace>();
 
             for (int i = -1; i <= 1; i++) {

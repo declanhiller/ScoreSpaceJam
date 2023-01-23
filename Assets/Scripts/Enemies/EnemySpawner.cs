@@ -8,6 +8,8 @@ using Random = UnityEngine.Random;
 namespace Enemies {
     public class EnemySpawner : MonoBehaviour {
         [SerializeField] private GameObject enemy;
+        [SerializeField] private Transform folderForNumbers;
+        [SerializeField] private GameObject uiNumber;
 
         [SerializeField] private Sprite pawn;
         [SerializeField] private Sprite rook;
@@ -15,6 +17,8 @@ namespace Enemies {
         [SerializeField] private Sprite king;
         [SerializeField] private Sprite queen;
         [SerializeField] private Sprite knight;
+
+        [SerializeField] private Camera camera;
 
         [SerializeField] private ChessGrid cellGrid;
 
@@ -36,6 +40,9 @@ namespace Enemies {
         
         public Enemy CreateNewEnemy(Vector3 worldSpace) {
             GameObject instantiate = Instantiate(enemy, worldSpace, Quaternion.identity);
+            GameObject uiElement = Instantiate(uiNumber, camera.WorldToScreenPoint(worldSpace), Quaternion.identity,
+                folderForNumbers);
+            instantiate.GetComponent<Enemy>().moveTracker = uiElement;
             int range = Random.Range(0, 4);
             switch (range) {
                 //should be using factory pattern here but currently dying so won't bother
@@ -62,31 +69,31 @@ namespace Enemies {
 
         public void CreateNewKing(GameObject obj)
         {
-            obj.GetComponent<Enemy>().chessMovement = new KingMovement(1);
+            obj.GetComponent<Enemy>().SetChessMovement(new KingMovement(1));
             obj.GetComponent<SpriteRenderer>().sprite = king;
         }
 
         public void CreateNewRook(GameObject obj)
         {
-            obj.GetComponent<Enemy>().chessMovement = new RookMovement(3);
+            obj.GetComponent<Enemy>().SetChessMovement(new RookMovement(3));
             obj.GetComponent<SpriteRenderer>().sprite = rook;
         }
 
         public void CreateNewBishop(GameObject obj)
         {
-            obj.GetComponent<Enemy>().chessMovement = new BishopMovement(3);
+            obj.GetComponent<Enemy>().SetChessMovement(new BishopMovement(3));
             obj.GetComponent<SpriteRenderer>().sprite = bishop;
         }
 
         public void CreateNewQueen(GameObject obj)
         {
-            obj.GetComponent<Enemy>().chessMovement = new QueenMovement(5);
+            obj.GetComponent<Enemy>().SetChessMovement(new QueenMovement(5));
             obj.GetComponent<SpriteRenderer>().sprite = queen;
         }
 
         public void CreateNewKnight(GameObject obj)
         {
-            obj.GetComponent<Enemy>().chessMovement = new KnightMovement(1);
+            obj.GetComponent<Enemy>().SetChessMovement(new KingMovement(1));
             obj.GetComponent<SpriteRenderer>().sprite = knight;
         }
 
